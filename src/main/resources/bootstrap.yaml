@@ -1,0 +1,50 @@
+server:
+  port: 8888
+  max-http-header-size: 100000
+
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  main:
+    allow-bean-definition-overriding: true
+  shardingsphere:
+    datasource:
+      ds0:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        filter:
+          stat:
+            log-slow-sql: true
+            merge-sql: true
+            slow-sql-millis: 1000
+          wall:
+            config:
+              multi-statement-allow: true
+        initial-size: 10
+        max-active: 100
+        max-pool-prepared-statement-per-connection-size: 20
+        max-wait: 60000
+        min-evictable-idle-time-millis: 300000
+        min-idle: 10
+        password: 1qaz!QAZ
+        pool-prepared-statements: true
+        stat-view-servlet:
+          enabled: true
+          url-pattern: /druid/*
+        test-on-borrow: false
+        test-on-return: false
+        test-while-idle: true
+        time-between-eviction-runs-millis: 60000
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://139.186.80.198:3306/smp?allowMultiQueries=true&useUnicode=truecharacterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+        username: root
+        validation-query: SELECT 1 FROM DUAL
+      names: ds0
+    sharding:
+      tables:
+        itp_crowd_record:
+          actualDataNodes: ds0.itp_crowd_record_$->{1..49}
+          tableStrategy:
+            inline:
+              algorithmExpression: itp_crowd_record_$->{task_id % 50}
+              shardingColumn: task_id
